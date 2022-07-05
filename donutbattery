@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+
+#
+# SPDX-License-Identifier: GPL-3.0
+#
+
+version=1.0
+
+psdir="/sys/class/power_supply"
+
+usage() { 
+    printf "    Usage: donutbattery 
+    
+    Donutbattery is a cli tool written in bash showing battery informations.
+
+    OPTIONS
+        -v | --version : Shows donutbattery version\n"
+}
+
+print_infos(){
+    if [ $(ls /sys/class/power_supply/ | grep BAT) == "" ]; then 
+        echo "There is no battery plugged in !"
+        exit 1
+    fi
+
+    for device in $(ls /sys/class/power_supply/ | grep BAT)
+    do 
+        bat_dir="$psdir/$device"
+        battery_health=$(awk "BEGIN { pc=100*$(cat "$bat_dir"/energy_full)/$(cat "$bat_dir"/energy_full_design); i=int(pc); print (pc-i<0.5)?i:i+1 }")
+        echo "*********** $(cat "$bat_dir"/model_name) ***********"
+        echo "Device: $device"
+        echo "Manufacturer: $(cat "$bat_dir"/manufacturer)"
+        echo "Status: $(cat "$bat_dir"/status)"
+        echo "Level: $(cat "$bat_dir"/capacity)%"
+        echo "Cycles: $(cat "$bat_dir"/cycle_count)"
+        echo "Health: $battery_health%"
+        echo "Technology: $(cat "$bat_dir"/technology)"
+        echo "Current capacity: $(cat "$bat_dir"/energy_now)µWh"
+        echo "Full charge capacity: $(cat "$bat_dir"/energy_full)µWh"
+        echo "Designed capacity: $(cat "$bat_dir"/energy_full_design)µWh"
+        echo "Voltage: $(cat "$bat_dir"/voltage_now)µV"
+        echo "Designed voltage: $(cat "$bat_dir"/voltage_min_design)µV" 
+        echo "************************************"
+    done
+}
+
+case $1 in
+    "--help" | "-h")
+        usage
+        exit 1
+        ;;
+    "--version" | "-v")
+        echo "Donutbattery $version"
+        exit 1
+        ;;
+    "")
+        print_infos 2> /dev/null
+        exit 0
+        ;;
+esac
