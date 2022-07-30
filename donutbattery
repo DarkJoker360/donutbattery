@@ -105,6 +105,10 @@ read_device_nodes() {
             v=$(adb shell cat "$bat_dir"/voltage_now)
             battery_health=$(awk "BEGIN { pc=100*$fc_cap/$d_cap; i=int(pc); print (pc-i<0.5)?i:i+1 }")
             ;;
+        * )
+            status=$(adb shell cat "$bat_dir"/status)
+            level=$(adb shell cat "$bat_dir"/capacity)
+            ;;
     esac
 }
 
