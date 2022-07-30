@@ -17,6 +17,13 @@ usage() {
         -v | --version : Shows donutbattery version\n"
 }
 
+detect_device(){
+    # TODO: Handle properly device detection.
+    adb devices && (adb root || adb shell su -c test ls) || return 0
+    device_oem=$(adb shell getprop ro.product.manufacturer)
+    return 1
+}
+
 print_infos(){
     if [ $(ls /sys/class/power_supply/ | grep BAT) == "" ]; then 
         echo "There is no battery plugged in !"
@@ -44,6 +51,63 @@ print_infos(){
     done
 }
 
+print_device_infos(){
+    echo "********* $name *********"
+    echo "Manufacturer: $device_oem"
+    echo "Status: $status"
+    echo "Level: $level%"
+    echo "Cycles: $cycles"
+    echo "Health: $battery_health%"
+    echo "Health status: $health"
+    echo "Technology: $tech"
+    echo "Full charge capacity: $fc_capµWh"
+    echo "Designed capacity: $d_capµWh"
+    echo "Voltage: $vµV"
+    echo "************************************"
+}
+
+read_device_nodes() {
+    bat_dir="$psdir/battery"
+    bms_dir="$psdir/bms"
+    name=$(adb shell getprop ro.product.model)
+    case $device_oem in
+        "Xiaomi")
+            status=$(adb shell cat "$bat_dir"/status)
+            level=$(adb shell cat "$bat_dir"/capacity)
+            cycles=$(adb shell cat "$bms_dir"/cycle_count)
+            health=$(adb shell cat "$bat_dir"/health)
+            tech=$(adb shell cat "$bat_dir"/technology)
+            fc_cap=$(adb shell cat "$bat_dir"/charge_full)
+            d_cap=$(adb shell cat "$bat_dir"/charge_full_design)
+            v=$(adb shell cat "$bat_dir"/voltage_now)
+            battery_health=$(awk "BEGIN { pc=100*$fc_cap/$d_cap; i=int(pc); print (pc-i<0.5)?i:i+1 }")
+            ;;
+        "OnePlus")
+            name=$(adb shell getprop ro.product.name)
+            status=$(adb shell cat "$bat_dir"/status)
+            level=$(adb shell cat "$bat_dir"/capacity)
+            cycles=$(adb shell cat "$bat_dir"/cycle_count)
+            health=$(adb shell cat "$bat_dir"/health)
+            tech=$(adb shell cat "$bat_dir"/technology)
+            fc_cap=$(adb shell cat "$bat_dir"/charge_full)
+            d_cap=$(adb shell cat "$bat_dir"/charge_full_design)
+            v=$(adb shell cat "$bat_dir"/voltage_now)
+            battery_health=$(awk "BEGIN { pc=100*($fc_cap*1000)/$d_cap; i=int(pc); print (pc-i<0.5)?i:i+1 }")
+            ;;
+        "samsung")
+            status=$(adb shell cat "$bat_dir"/status)
+            level=$(adb shell cat "$bat_dir"/capacity)
+            cycles=
+            health=$(adb shell cat "$bat_dir"/health)
+            tech=$(adb shell cat "$bat_dir"/technology)
+            fc_cap=$(adb shell cat "$bat_dir"/charge_full)
+            d_cap=$(adb shell cat "$bat_dir"/charge_full_design)
+            v=$(adb shell cat "$bat_dir"/voltage_now)
+            battery_health=$(awk "BEGIN { pc=100*$fc_cap/$d_cap; i=int(pc); print (pc-i<0.5)?i:i+1 }")
+            ;;
+    esac
+}
+
 case $1 in
     "--help" | "-h")
         usage
@@ -55,6 +119,11 @@ case $1 in
         ;;
     "")
         print_infos 2> /dev/null
+        detect_device &> /dev/null
+        if [ $? == 1 ]; then
+            read_device_nodes 2> /dev/null
+            print_device_infos 2> /dev/null
+        fi
         exit 0
         ;;
 esac
