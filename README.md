@@ -1,8 +1,12 @@
 # Donutbattery
 
-Donutbattery is a cli tool written in bash showing battery informations.
+Donutbattery is a cli tool written in bash showing battery informations of computer and connected android devices, using ADB and Root.
 
-<img src="https://i.imgur.com/Y7yJ5O8.png" >
+Currently supported Android OEMs are: Xiaomi, OnePlus, Samsung.
+
+Pull requests and contributions are welcome.
+
+<img src="https://i.imgur.com/Jb6JUsG.png" >
 
 ## Installation
 ```bash
