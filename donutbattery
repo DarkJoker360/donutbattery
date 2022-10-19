@@ -48,6 +48,17 @@ print_infos(){
                 voltage="$bat_dir"/voltage_now
                 designed_voltage="$bat_dir"/voltage_min_design
                 ;;
+            "SANYO")
+                status="$bat_dir"/status
+                capacity="$bat_dir"/capacity
+                cycles="$bat_dir"/cycle_count
+                tech="$bat_dir"/technology
+                curr_capacity="$bat_dir"/charge_now
+                fullcharge_capacity="$bat_dir"/charge_full
+                designed_capacity="$bat_dir"/charge_full_design
+                voltage="$bat_dir"/voltage_now
+                designed_voltage="$bat_dir"/voltage_min_design
+                ;;
             * )
                 status="$bat_dir"/status
                 capacity="$bat_dir"/capacity
