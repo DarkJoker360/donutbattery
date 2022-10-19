@@ -8,9 +8,9 @@ version=1.1
 
 psdir="/sys/class/power_supply"
 
-usage() { 
-    printf "    Usage: donutbattery 
-    
+usage() {
+    printf "    Usage: donutbattery
+
     Donutbattery is a cli tool written in bash showing battery informations.
 
     OPTIONS
@@ -25,13 +25,13 @@ detect_device(){
 }
 
 print_infos(){
-    if [ $(ls /sys/class/power_supply/ | grep BAT) == "" ]; then 
+    if [ $(ls /sys/class/power_supply/ | grep BAT) == "" ]; then
         echo "There is no battery plugged in !"
         exit 1
     fi
 
     for device in $(ls /sys/class/power_supply/ | grep BAT)
-    do 
+    do
         bat_dir="$psdir/$device"
         battery_health=$(awk "BEGIN { pc=100*$(cat "$bat_dir"/energy_full)/$(cat "$bat_dir"/energy_full_design); i=int(pc); print (pc-i<0.5)?i:i+1 }")
         echo "*********** $(cat "$bat_dir"/model_name) ***********"
@@ -46,7 +46,7 @@ print_infos(){
         echo "Full charge capacity: $(cat "$bat_dir"/energy_full)µWh"
         echo "Designed capacity: $(cat "$bat_dir"/energy_full_design)µWh"
         echo "Voltage: $(cat "$bat_dir"/voltage_now)µV"
-        echo "Designed voltage: $(cat "$bat_dir"/voltage_min_design)µV" 
+        echo "Designed voltage: $(cat "$bat_dir"/voltage_min_design)µV"
         echo "************************************"
     done
 }
