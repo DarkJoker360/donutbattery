@@ -33,20 +33,32 @@ print_infos(){
     for device in $(ls /sys/class/power_supply/ | grep BAT)
     do
         bat_dir="$psdir/$device"
-        battery_health=$(awk "BEGIN { pc=100*$(cat "$bat_dir"/energy_full)/$(cat "$bat_dir"/energy_full_design); i=int(pc); print (pc-i<0.5)?i:i+1 }")
-        echo "*********** $(cat "$bat_dir"/model_name) ***********"
+        manufacturer="$bat_dir"/manufacturer
+        model="$bat_dir"/model_name
+        status="$bat_dir"/status
+        capacity="$bat_dir"/capacity
+        cycles="$bat_dir"/cycle_count
+        tech="$bat_dir"/technology
+        curr_capacity="$bat_dir"/energy_now
+        fullcharge_capacity="$bat_dir"/energy_full
+        designed_capacity="$bat_dir"/energy_full_design
+        voltage="$bat_dir"/voltage_now
+        designed_voltage="$bat_dir"/voltage_min_design
+        battery_health=$(awk "BEGIN { pc=100*$(cat "$fullcharge_capacity")/$(cat "$designed_capacity"); i=int(pc); print (pc-i<0.5)?i:i+1 }")
+
+        echo "*********** $(cat $model) ***********"
         echo "Device: $device"
-        echo "Manufacturer: $(cat "$bat_dir"/manufacturer)"
-        echo "Status: $(cat "$bat_dir"/status)"
-        echo "Level: $(cat "$bat_dir"/capacity)%"
-        echo "Cycles: $(cat "$bat_dir"/cycle_count)"
+        echo "Manufacturer: $(cat $manufacturer)"
+        echo "Status: $(cat $status)"
+        echo "Level: $(cat $capacity)%"
+        echo "Cycles: $(cat $cycles)"
         echo "Health: $battery_health%"
-        echo "Technology: $(cat "$bat_dir"/technology)"
-        echo "Current capacity: $(cat "$bat_dir"/energy_now)µWh"
-        echo "Full charge capacity: $(cat "$bat_dir"/energy_full)µWh"
-        echo "Designed capacity: $(cat "$bat_dir"/energy_full_design)µWh"
-        echo "Voltage: $(cat "$bat_dir"/voltage_now)µV"
-        echo "Designed voltage: $(cat "$bat_dir"/voltage_min_design)µV"
+        echo "Technology: $(cat $tech)"
+        echo "Current capacity: $(cat $curr_capacity)µWh"
+        echo "Full charge capacity: $(cat $fullcharge_capacity)µWh"
+        echo "Designed capacity: $(cat $designed_capacity)µWh"
+        echo "Voltage: $(cat $voltage)µV"
+        echo "Designed voltage: $(cat $designed_voltage)µV"
         echo "************************************"
     done
 }
