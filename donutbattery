@@ -35,15 +35,32 @@ print_infos(){
         bat_dir="$psdir/$device"
         manufacturer="$bat_dir"/manufacturer
         model="$bat_dir"/model_name
-        status="$bat_dir"/status
-        capacity="$bat_dir"/capacity
-        cycles="$bat_dir"/cycle_count
-        tech="$bat_dir"/technology
-        curr_capacity="$bat_dir"/energy_now
-        fullcharge_capacity="$bat_dir"/energy_full
-        designed_capacity="$bat_dir"/energy_full_design
-        voltage="$bat_dir"/voltage_now
-        designed_voltage="$bat_dir"/voltage_min_design
+
+        case $(cat $manufacturer) in
+            "ASUSTeK")
+                status="$bat_dir"/status
+                capacity="$bat_dir"/capacity
+                cycles="$bat_dir"/cycle_count
+                tech="$bat_dir"/technology
+                curr_capacity="$bat_dir"/energy_now
+                fullcharge_capacity="$bat_dir"/energy_full
+                designed_capacity="$bat_dir"/energy_full_design
+                voltage="$bat_dir"/voltage_now
+                designed_voltage="$bat_dir"/voltage_min_design
+                ;;
+            * )
+                status="$bat_dir"/status
+                capacity="$bat_dir"/capacity
+                cycles="$bat_dir"/cycle_count
+                tech="$bat_dir"/technology
+                curr_capacity="$bat_dir"/energy_now
+                fullcharge_capacity="$bat_dir"/energy_full
+                designed_capacity="$bat_dir"/energy_full_design
+                voltage="$bat_dir"/voltage_now
+                designed_voltage="$bat_dir"/voltage_min_design
+                ;;
+        esac
+
         battery_health=$(awk "BEGIN { pc=100*$(cat "$fullcharge_capacity")/$(cat "$designed_capacity"); i=int(pc); print (pc-i<0.5)?i:i+1 }")
 
         echo "*********** $(cat $model) ***********"
