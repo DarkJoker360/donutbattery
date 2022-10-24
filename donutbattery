@@ -48,7 +48,7 @@ print_infos(){
                 voltage="$bat_dir"/voltage_now
                 designed_voltage="$bat_dir"/voltage_min_design
                 ;;
-            "SANYO")
+            "Notebook" | "SANYO")
                 status="$bat_dir"/status
                 capacity="$bat_dir"/capacity
                 cycles="$bat_dir"/cycle_count
