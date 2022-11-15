@@ -30,11 +30,16 @@ print_infos(){
         exit 1
     fi
 
+    is_wsl=false
     for device in $(ls /sys/class/power_supply/ | grep BAT)
     do
         bat_dir="$psdir/$device"
         manufacturer="$bat_dir"/manufacturer
         model="$bat_dir"/model_name
+
+        if [[ $(cat $model) == "Microsoft Hyper-V Virtual BatterVirtual" ]]; then
+            is_wsl=true
+        fi
 
         case $(cat $manufacturer) in
             "ASUSTeK")
@@ -76,17 +81,17 @@ print_infos(){
 
         echo "*********** $(cat $model) ***********"
         echo "Device: $device"
-        echo "Manufacturer: $(cat $manufacturer)"
+        [ $is_wsl == false ] && echo "Manufacturer: $(cat $manufacturer)"
         echo "Status: $(cat $status)"
         echo "Level: $(cat $capacity)%"
-        echo "Cycles: $(cat $cycles)"
-        echo "Health: $battery_health%"
-        echo "Technology: $(cat $tech)"
-        echo "Current capacity: $(cat $curr_capacity)µWh"
-        echo "Full charge capacity: $(cat $fullcharge_capacity)µWh"
-        echo "Designed capacity: $(cat $designed_capacity)µWh"
-        echo "Voltage: $(cat $voltage)µV"
-        echo "Designed voltage: $(cat $designed_voltage)µV"
+        [ $is_wsl == false ] && echo "Health: $battery_health%"
+        [ $is_wsl == false ] && echo "Cycles: $(cat $cycles)"
+        [ $is_wsl == false ] && echo "Technology: $(cat $tech)"
+        [ $is_wsl == false ] && echo "Current capacity: $(cat $curr_capacity)µWh"
+        [ $is_wsl == false ] && echo "Full charge capacity: $(cat $fullcharge_capacity)µWh"
+        [ $is_wsl == false ] && echo "Designed capacity: $(cat $designed_capacity)µWh"
+        [ $is_wsl == false ] && echo "Voltage: $(cat $voltage)µV"
+        [ $is_wsl == false ] && echo "Designed voltage: $(cat $designed_voltage)µV"
         echo "************************************"
     done
 }
