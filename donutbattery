@@ -20,7 +20,7 @@ usage() {
 detect_device(){
     # TODO: Handle properly device detection.
     adb devices && (adb root || adb shell su -c test ls) || return 0
-    device_oem=$(adb shell getprop ro.product.manufacturer)
+    device_oem=$(adb shell getprop ro.product.vendor.manufacturer)
     return 1
 }
 
@@ -114,7 +114,7 @@ print_device_infos(){
 read_device_nodes() {
     bat_dir="$psdir/battery"
     bms_dir="$psdir/bms"
-    name=$(adb shell getprop ro.product.model)
+    name=$(adb shell getprop ro.product.vendor.model)
     case $device_oem in
         "Xiaomi")
             status=$(adb shell cat "$bat_dir"/status)
@@ -128,7 +128,7 @@ read_device_nodes() {
             battery_health=$(awk "BEGIN { pc=100*$fc_cap/$d_cap; i=int(pc); print (pc-i<0.5)?i:i+1 }")
             ;;
         "OnePlus")
-            name=$(adb shell getprop ro.product.name)
+            name=$(adb shell getprop ro.product.vendor.name)
             status=$(adb shell cat "$bat_dir"/status)
             level=$(adb shell cat "$bat_dir"/capacity)
             cycles=$(adb shell cat "$bat_dir"/cycle_count)
