@@ -1,4 +1,4 @@
-# Donutbattery
+# Donutbattery Linux
 
 Donutbattery is a cli tool written in bash showing battery informations of computer and connected android devices, using ADB and Root.
 
