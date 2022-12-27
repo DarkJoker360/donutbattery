@@ -20,7 +20,6 @@ usage() {
 detect_device(){
     # TODO: Handle properly device detection.
     adb devices && (adb root || adb shell su -c test ls) || return 0
-    device_oem=$(adb shell getprop ro.product.vendor.manufacturer)
     return 1
 }
 
@@ -114,6 +113,7 @@ print_device_infos(){
 read_device_nodes() {
     bat_dir="$psdir/battery"
     bms_dir="$psdir/bms"
+    device_oem=$(adb shell getprop ro.product.vendor.manufacturer)
     name=$(adb shell getprop ro.product.vendor.model)
     case $device_oem in
         "Xiaomi")
