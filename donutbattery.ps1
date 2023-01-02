@@ -34,7 +34,7 @@ function Print-Infos {
         Switch ($status_val) {
             { $_ -lt 1 } { $status = "Unknown" }            
             { $_ -eq 1 } { $status = "Discharging" }
-            { $_ -eq 2 } { $status = "Not Charging - Fully Charged" }
+            { $_ -eq 2 } { $status = "Charging" }
             { $_ -eq 3 } { $status = "Charging - Fully Charged" }
             { $_ -eq 4 } { $status = "Discharging - Low" }
             { $_ -eq 5 } { $status = "Discharging -  Critical" }
