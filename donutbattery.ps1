@@ -17,7 +17,14 @@ function Usage {
 
 function Detect-Device {
     # TODO: Handle properly device detection.
-    if($(adb devices) -and ($(adb root) -or $(adb shell su -c test ls)) -eq 0) { Exit 1 }
+     if ($(adb devices) -eq 0) {
+        if ($(adb root) -eq 0) {
+            Exit 1
+        } elif ($(adb shell su -c test ls)) {
+            Exit 1
+        }
+     }
+     Exit 0
 }
 
 function Print-Infos {
@@ -64,41 +71,41 @@ function Print-Device-Infos {
     $device_oem = Write-Output $(adb shell getprop ro.product.vendor.manufacturer)
     Switch ($device_oem) {
         { $_ -eq "Xiaomi" } {
-            $status = Write-Output $(adb shell cat $bat_dir/status)
-            $level = Write-Output $(adb shell cat $bat_dir/capacity)
-            $cycles = Write-Output $(adb shell cat $bms_dir/cycle_count)
-            $health = Write-Output $(adb shell cat $bat_dir/health)
-            $tech = Write-Output $(adb shell cat $bat_dir/technology)
-            $fc_cap = Write-Output $(adb shell cat $bat_dir/charge_full)
-            $d_cap = Write-Output $(adb shell cat $bat_dir/charge_full_design)
-            $v = Write-Output $(adb shell cat $bat_dir/voltage_now)
-            $battery_health =  [int] (100000 * ($fc_cap/$d_cap))
+            $status = Write-Output $(Read-Device-Sysfs $bat_dir/status)
+            $level = Write-Output $(Read-Device-Sysfs $bat_dir/capacity)
+            $cycles = Write-Output $(Read-Device-Sysfs $bms_dir/cycle_count)
+            $health = Write-Output $(Read-Device-Sysfs $bat_dir/health)
+            $tech = Write-Output $(Read-Device-Sysfs $bat_dir/technology)
+            $fc_cap = Write-Output $(Read-Device-Sysfs $bat_dir/charge_full)
+            $d_cap = Write-Output $(Read-Device-Sysfs $bat_dir/charge_full_design)
+            $v = Write-Output $(Read-Device-Sysfs $bat_dir/voltage_now)
+            $battery_health =  [int] (100 * ($fc_cap/$d_cap))
         }
         { $_ -eq "OnePlus" } {
-            $status = Write-Output $(adb shell cat $bat_dir/status)
-            $level = Write-Output $(adb shell cat $bat_dir/capacity)
-            $cycles = Write-Output $(adb shell cat $bat_dir/cycle_count)
-            $health = Write-Output $(adb shell cat $bat_dir/health)
-            $tech = Write-Output $(adb shell cat $bat_dir/technology)
-            $fc_cap = Write-Output $(adb shell cat $bat_dir/charge_full)
-            $d_cap = Write-Output $(adb shell cat $bat_dir/charge_full_design)
-            $v = Write-Output $(adb shell cat $bat_dir/voltage_now)
+            $status = Write-Output $(Read-Device-Sysfs $bat_dir/status)
+            $level = Write-Output $(Read-Device-Sysfs $bat_dir/capacity)
+            $cycles = Write-Output $(Read-Device-Sysfs $bat_dir/cycle_count)
+            $health = Write-Output $(Read-Device-Sysfs $bat_dir/health)
+            $tech = Write-Output $(Read-Device-Sysfs $bat_dir/technology)
+            $fc_cap = Write-Output $(Read-Device-Sysfs $bat_dir/charge_full)
+            $d_cap = Write-Output $(Read-Device-Sysfs $bat_dir/charge_full_design)
+            $v = Write-Output $(Read-Device-Sysfs $bat_dir/voltage_now)
             $battery_health =  [int] (100000 * ($fc_cap/$d_cap))
         }
         { $_ -eq "samsung" } {
-            $status = Write-Output $(adb shell cat $bat_dir/status)
-            $level = Write-Output $(adb shell cat $bat_dir/capacity)
+            $status = Write-Output $(Read-Device-Sysfs $bat_dir/status)
+            $level = Write-Output $(Read-Device-Sysfs $bat_dir/capacity)
             $cycles = ""
-            $health = Write-Output $(adb shell cat $bat_dir/health)
-            $tech = Write-Output $(adb shell cat $bat_dir/technology)
-            $fc_cap = Write-Output $(adb shell cat $bat_dir/charge_full)
-            $d_cap = Write-Output $(adb shell cat $bat_dir/charge_full_design)
-            $v = Write-Output $(adb shell cat $bat_dir/voltage_now)
+            $health = Write-Output $(Read-Device-Sysfs $bat_dir/health)
+            $tech = Write-Output $(Read-Device-Sysfs $bat_dir/technology)
+            $fc_cap = Write-Output $(Read-Device-Sysfs $bat_dir/charge_full)
+            $d_cap = Write-Output $(Read-Device-Sysfs $bat_dir/charge_full_design)
+            $v = Write-Output $(Read-Device-Sysfs $bat_dir/voltage_now)
             $battery_health =  [int] (100000 * ($fc_cap/$d_cap))
         }
         Default {
-            $status = Write-Output $(adb shell cat $bat_dir/status)
-            $level = Write-Output $(adb shell cat $bat_dir/capacity)
+            $status = Write-Output $(Read-Device-Sysfs $bat_dir/status)
+            $level = Write-Output $(Read-Device-Sysfs $bat_dir/capacity)
         }
     }
 
@@ -111,6 +118,14 @@ function Print-Device-Infos {
     if ($d_cap -ne "") { Write-Output "Designed Capacity: $d_cap µWh" }
     if ($v -ne "") { Write-Output "Voltage: $v µV" }
     Write-Output "************************************"
+}
+
+function Read-Device-Sysfs { Param ( [string] $Path )
+    if($(adb shell cat $Path)){
+         $(adb shell cat $Path)
+    } else {
+        $(adb shell su -c cat $Path)
+    }
 }
 
 Switch($args[0]) {
