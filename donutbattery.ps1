@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0
 #
 
-$version="2.1"
+$version="2.2"
 
 $batt_obj = (Get-WmiObject Win32_Battery -ComputerName $env:COMPUTERNAME)
 
