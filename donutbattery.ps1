@@ -12,7 +12,9 @@ function Usage {
     Donutbattery is a cli tool written in bash showing battery informations.
     
     OPTIONS
-        -v | --version : Shows donutbattery version"
+        -v | --version : Shows donutbattery version
+        -w | --windows-report : Generates and shows windows battery report
+                                (a web browser must be installed)"
 }
 
 function Detect-Device {
@@ -130,6 +132,10 @@ function Read-Device-Sysfs { Param ( [string] $Path )
 
 Switch($args[0]) {
     { $_ -eq "-v" -or $_ -eq "--version" } { Write-Output "Donutbattery $version"}
+    { $_ -eq "-w" -or $_ -eq "--generate-windows-report" } {
+        powercfg /BATTERYREPORT /output win_report.html
+        Invoke-Expression ".\win_report.html"
+    }
     { $_ -eq "-h" -or $_ -eq "--help" } { Usage }
     Default {
         Print-Infos
