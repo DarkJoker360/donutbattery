@@ -8,9 +8,9 @@ $batt_obj = (Get-WmiObject Win32_Battery -ComputerName $env:COMPUTERNAME)
 
 function Usage {
     Write-Output "Usage: donutbattery
-    
+
     Donutbattery is a cli tool written in bash showing battery informations.
-    
+
     OPTIONS
         -v | --version : Shows donutbattery version
         -w | --windows-report : Generates and shows windows battery report
@@ -41,7 +41,7 @@ function Print-Infos {
         $status_val = $batt_obj.BatteryStatus
 
         Switch ($status_val) {
-            { $_ -lt 1 } { $status = "Unknown" }            
+            { $_ -lt 1 } { $status = "Unknown" }
             { $_ -eq 1 } { $status = "Discharging" }
             { $_ -eq 2 } { $status = "Charging" }
             { $_ -eq 3 } { $status = "Charging - Fully Charged" }
