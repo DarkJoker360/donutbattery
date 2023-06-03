@@ -9,7 +9,7 @@ $batt_obj = (Get-WmiObject Win32_Battery -ComputerName $env:COMPUTERNAME)
 function Usage {
     Write-Output "Usage: donutbattery
 
-    Donutbattery is a cli tool written in bash showing battery informations.
+    Donutbattery is a cli tool written in powershell showing battery informations.
 
     OPTIONS
         -v | --version : Shows donutbattery version
