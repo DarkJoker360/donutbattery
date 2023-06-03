@@ -15,6 +15,11 @@ Put `donutbattery.ps1` in a powershell executable path and run with `donutbatter
 
 Alternatively the tool can be executed onetime only with `.\donutbattery.ps1` command
 
+Script arguments:  
+- `-v | --version : Shows donutbattery version`  
+- `-w | --windows-report : Generates and shows windows battery report` (a web browser must be installed)  
+- `-h | --help : Shows the two previous usage lines`
+
 ## Knows issues / TODO
 * Computers with more than one battery may give some issues
 
