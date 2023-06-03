@@ -8,6 +8,10 @@ Pull requests and contributions are welcome.
 
 <img src="https://i.imgur.com/Jb6JUsG.png" >
 
+Script arguments:  
+- `-v | --version : Shows donutbattery version`
+- `-h | --help : Shows usage lines`
+
 ## Installation
 ```bash
 git clone https://github.com/DarkJoker360/donutbattery
